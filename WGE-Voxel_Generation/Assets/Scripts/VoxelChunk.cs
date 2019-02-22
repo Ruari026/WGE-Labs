@@ -13,8 +13,7 @@ public class VoxelChunk : MonoBehaviour
     {
         voxelGenerator = GetComponent<VoxelGenerator>();
         // Instantiate the array with size based on chunksize
-        terrainArray = new int[chunkSize, chunkSize, chunkSize];
-
+        terrainArray = new int[chunkSize, chunkSize, chunkSize];        
         voxelGenerator.Initialise();
         InitialiseTerrain();
         CreateTerrain();
@@ -52,6 +51,30 @@ public class VoxelChunk : MonoBehaviour
                 }
             }
         }
+
+        //Setting Stone Path
+        terrainArray[0, 3, 1] = 4;
+        terrainArray[0, 3, 2] = 4;
+        terrainArray[0, 3, 3] = 4;
+        terrainArray[1, 3, 3] = 4;
+        terrainArray[1, 3, 4] = 4;
+        terrainArray[2, 3, 4] = 4;
+        terrainArray[3, 3, 4] = 4;
+        terrainArray[4, 3, 4] = 4;
+        terrainArray[5, 3, 4] = 4;
+        terrainArray[5, 3, 3] = 4;
+        terrainArray[5, 3, 2] = 4;
+        terrainArray[6, 3, 2] = 4;
+        terrainArray[7, 3, 2] = 4;
+        terrainArray[8, 3, 2] = 4;
+        terrainArray[9, 3, 2] = 4;
+        terrainArray[10, 3, 2] = 4;
+        terrainArray[11, 3, 2] = 4;
+        terrainArray[12, 3, 2] = 4;
+        terrainArray[13, 3, 2] = 4;
+        terrainArray[13, 3, 3] = 4;
+        terrainArray[14, 3, 3] = 4;
+        terrainArray[15, 3, 3] = 4;
     }
 
     void CreateTerrain()
@@ -78,6 +101,12 @@ public class VoxelChunk : MonoBehaviour
                                 break;
                             case 2:
                                 tex = "Dirt";
+                                break;
+                            case 3:
+                                tex = "Sand";
+                                break;
+                            case 4:
+                                tex = "Stone";
                                 break;
                             default:
                                 tex = "Grass";
@@ -112,7 +141,7 @@ public class VoxelChunk : MonoBehaviour
                             voxelGenerator.CreateNegativeZFace(x, y, z, tex);
                         }
                         // check if we need to draw the positive z face
-                        if (z == terrainArray.GetLength(0) - 1 || terrainArray[x, y, z + 1] == 0)
+                        if (z == terrainArray.GetLength(2) - 1 || terrainArray[x, y, z + 1] == 0)
                         {
                             voxelGenerator.CreatePositiveZFace(x, y, z, tex);
                         }
