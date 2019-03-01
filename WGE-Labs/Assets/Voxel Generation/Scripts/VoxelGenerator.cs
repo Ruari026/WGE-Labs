@@ -30,8 +30,19 @@ public class VoxelGenerator : MonoBehaviour
         UVList = new List<Vector2>();
     }
 
+    // Clear previous data structures used to create the mesh
+    public void ClearPreviousData()
+    {
+        vertexList.Clear();
+        triIndexList.Clear();
+        UVList.Clear();
+        numQuads = 0;
+    }
+
     public void UpdateMesh()
     {
+        mesh.Clear();
+
         // Convert index list to array and store in mesh
         mesh.vertices = vertexList.ToArray();
         // Convert index list to array and store in mesh
@@ -42,6 +53,8 @@ public class VoxelGenerator : MonoBehaviour
         // Create a collision mesh
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = mesh;
+
+        ClearPreviousData();
     }
 
     public void CreateVoxel(int x, int y, int z, Vector2 uvCoords)
@@ -80,7 +93,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreatePositiveXFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -102,7 +114,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreateNegativeXFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];

@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class VoxelChunk : MonoBehaviour
 {
+    // delegate signatures
+    public delegate void EventBlockChanged();
+    public delegate void EventBlockChangedWithType(int blockType);
+
+    // event instances for EventBlockChanged
+    public static event EventBlockChanged OnEventBlockDestroyed;
+    public static event EventBlockChanged OnEventBlockPlaced;
+    // event instances for EventBlockChangedWithType
+    public static event EventBlockChangedWithType OnEventBlockChanged;
+
     VoxelGenerator voxelGenerator;
     int[,,] terrainArray;
     int chunkSize = 16;
@@ -26,6 +36,16 @@ public class VoxelChunk : MonoBehaviour
     {
 		
 	}
+    // When game object is enabled
+    void OnEnable()
+    {
+        PlayerScript.OnEventBlockSet += SetBlock;
+    }
+    // When game object is disabled
+    void OnDisable()
+    {
+        PlayerScript.OnEventBlockSet -= SetBlock;
+    }
 
     void InitialiseTerrain()
     {
@@ -153,5 +173,26 @@ public class VoxelChunk : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetBlock(Vector3 index, int blockType)
+    {
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+
+        if ((index.x > 0 && index.x < terrainArray.GetLength(0)) && (index.y > 0 && index.y < terrainArray.GetLength(1)) && (index.z > 0 && index.z < terrainArray.GetLength(2)))
+        {
+            // Change the block to the required type
+            terrainArray[(int)index.x, (int)index.y, (int)index.z] = blockType;
+            // Create the new mesh
+            CreateTerrain();
+            // Update the mesh data
+            voxelGenerator.UpdateMesh();
+
+            OnEventBlockChanged(blockType);
+        }
+
+        stopwatch.Stop();
+        Debug.Log(stopwatch.Elapsed);
     }
 }
