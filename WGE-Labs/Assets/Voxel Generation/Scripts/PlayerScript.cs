@@ -33,7 +33,6 @@ public class PlayerScript : MonoBehaviour
             Vector3 v;
             if (PickBlock(out v, 4, true))
             {
-                Debug.Log(v);
                 OnEventBlockSet(v, 1);
             }
         }
@@ -45,6 +44,12 @@ public class PlayerScript : MonoBehaviour
         }
 	}
 
+
+    /*
+    ==================================================
+    Block Removal & Addition
+    ==================================================
+    */
     bool PickThisBlock(out Vector3 v, float dist)
     {
         v = new Vector3();
@@ -62,7 +67,6 @@ public class PlayerScript : MonoBehaviour
             v.z = Mathf.Floor(v.z);
             return true;
         }
-
         return false;
     }
 
@@ -117,7 +121,6 @@ public class PlayerScript : MonoBehaviour
             }
             return true;
         }
-
         return false;
     }
 }

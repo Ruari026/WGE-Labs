@@ -22,16 +22,12 @@ public class AudioManager : MonoBehaviour
     // When game object is enabled
     void OnEnable()
     {
-        VoxelChunk.OnEventBlockDestroyed += PlayDestroyBlockSound;
-        VoxelChunk.OnEventBlockPlaced += PlayPlaceBlockSound;
-
         VoxelChunk.OnEventBlockChanged += PlayBlockSound;
     }
     // When game object is disabled
     void OnDisable()
     {
-        VoxelChunk.OnEventBlockDestroyed += PlayDestroyBlockSound;
-        VoxelChunk.OnEventBlockPlaced += PlayPlaceBlockSound;
+        VoxelChunk.OnEventBlockChanged -= PlayBlockSound;
     }
     
     // play the destroy block sound
@@ -48,13 +44,19 @@ public class AudioManager : MonoBehaviour
 
     void PlayBlockSound(int blockType)
     {
-        if (blockType == 0)
+        switch (blockType)
         {
-            GetComponent<AudioSource>().PlayOneShot(destroyBlockSound);
-        }
-        else
-        {
-            GetComponent<AudioSource>().PlayOneShot(placeBlockSound);
+            case (0):
+                {
+                    GetComponent<AudioSource>().PlayOneShot(destroyBlockSound);
+                }
+                break;
+
+            case (1):
+                {
+                    GetComponent<AudioSource>().PlayOneShot(placeBlockSound);
+                }
+                break;
         }
     }
 }

@@ -7,21 +7,23 @@ public class VoxelChunk : MonoBehaviour
     // delegate signatures
     public delegate void EventBlockChanged();
     public delegate void EventBlockChangedWithType(int blockType);
+    public delegate void EventBlockChangedWithTypeAndPosition(int blockType, Vector3 blockPosition);
 
-    // event instances for EventBlockChanged
-    public static event EventBlockChanged OnEventBlockDestroyed;
-    public static event EventBlockChanged OnEventBlockPlaced;
     // event instances for EventBlockChangedWithType
+    public static event EventBlockChangedWithType OnEventBlockPlaced;
     public static event EventBlockChangedWithType OnEventBlockChanged;
+    // event instances for EventBlockChangedWithPosition
+    public static event EventBlockChangedWithTypeAndPosition OnEventBlockDestroyed;
 
     VoxelGenerator voxelGenerator;
     int[,,] terrainArray;
-    int chunkSize = 16;
+    public int chunkSize = 16;
 
     // Use this for initialization
     void Start ()
     {
         voxelGenerator = GetComponent<VoxelGenerator>();
+
         // Instantiate the array with size based on chunksize
         terrainArray = new int[chunkSize, chunkSize, chunkSize];
         
@@ -31,11 +33,6 @@ public class VoxelChunk : MonoBehaviour
         voxelGenerator.UpdateMesh();
     }
 
-    // Update is called once per frame
-    void Update ()
-    {
-		
-	}
     // When game object is enabled
     void OnEnable()
     {
@@ -166,9 +163,6 @@ public class VoxelChunk : MonoBehaviour
                         {
                             voxelGenerator.CreatePositiveZFace(x, y, z, tex);
                         }
-
-
-                        print("Created " + tex + " block,");
                     }
                 }
             }
@@ -177,22 +171,29 @@ public class VoxelChunk : MonoBehaviour
 
     public void SetBlock(Vector3 index, int blockType)
     {
-        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-        stopwatch.Start();
-
-        if ((index.x > 0 && index.x < terrainArray.GetLength(0)) && (index.y > 0 && index.y < terrainArray.GetLength(1)) && (index.z > 0 && index.z < terrainArray.GetLength(2)))
+        if ((index.x >= 0 && index.x < terrainArray.GetLength(0)) && (index.y >= 0 && index.y < terrainArray.GetLength(1)) && (index.z >= 0 && index.z < terrainArray.GetLength(2)))
         {
-            // Change the block to the required type
+            //Getting the data of what was already there
+            int previousBlockType = terrainArray[(int)index.x, (int)index.y, (int)index.z];
+            Debug.Log("Previous Block: " + previousBlockType + "\nNew Block: " + blockType);
+            
+            if (blockType == 0)
+            {
+                OnEventBlockDestroyed(previousBlockType, index);
+            }
+            else
+            {
+                //OnEventBlockPlaced(blockType);
+            }
+
+            // Changing the block to the required type
             terrainArray[(int)index.x, (int)index.y, (int)index.z] = blockType;
-            // Create the new mesh
+
+            // Create the new mesh & Updating The Mesh Data
             CreateTerrain();
-            // Update the mesh data
             voxelGenerator.UpdateMesh();
 
             OnEventBlockChanged(blockType);
         }
-
-        stopwatch.Stop();
-        Debug.Log(stopwatch.Elapsed);
     }
 }

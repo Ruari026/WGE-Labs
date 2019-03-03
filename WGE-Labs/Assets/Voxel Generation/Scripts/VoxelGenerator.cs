@@ -45,11 +45,14 @@ public class VoxelGenerator : MonoBehaviour
 
         // Convert index list to array and store in mesh
         mesh.vertices = vertexList.ToArray();
+
         // Convert index list to array and store in mesh
         mesh.triangles = triIndexList.ToArray();
+
         // Convert UV list to array and store in mesh
         mesh.uv = UVList.ToArray();
         mesh.RecalculateNormals();
+
         // Create a collision mesh
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = mesh;
@@ -57,6 +60,12 @@ public class VoxelGenerator : MonoBehaviour
         ClearPreviousData();
     }
 
+
+    /*
+    ==================================================
+    Block Creation Methods
+    ==================================================
+    */
     public void CreateVoxel(int x, int y, int z, Vector2 uvCoords)
     {
         CreatePositiveXFace(x, y, z, uvCoords);
@@ -68,7 +77,6 @@ public class VoxelGenerator : MonoBehaviour
         CreatePositiveZFace(x, y, z, uvCoords);
         CreateNegativeZFace(x, y, z, uvCoords);
     }
-
     public void CreateVoxel(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -83,7 +91,13 @@ public class VoxelGenerator : MonoBehaviour
         CreateNegativeZFace(x, y, z, uvCoords);
     }
 
-    //Drawing X Faces
+
+    /*
+    ==================================================
+    Creating Block Faces
+    ==================================================
+    */
+    //Drawing Block X Faces
     public void CreatePositiveXFace(int x, int y, int z, Vector2 uvCoords)
     {
         vertexList.Add(new Vector3(x + 1, y, z));
@@ -126,7 +140,7 @@ public class VoxelGenerator : MonoBehaviour
         AddUVCoords(uvCoords);
     }
 
-    //Drawing Y Faces
+    //Drawing Block Y Faces
     public void CreateNegativeYFace(int x, int y, int z, Vector2 uvCoords)
     {
         vertexList.Add(new Vector3(x + 1, y, z));
@@ -136,7 +150,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreateNegativeYFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -158,7 +171,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreatePositiveYFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -171,7 +183,7 @@ public class VoxelGenerator : MonoBehaviour
         AddUVCoords(uvCoords);
     }
 
-    //Drawing Z Faces
+    //Drawing Block Z Faces
     public void CreateNegativeZFace(int x, int y, int z, Vector2 uvCoords)
     {
         vertexList.Add(new Vector3(x, y + 1, z));
@@ -182,7 +194,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreateNegativeZFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -205,7 +216,6 @@ public class VoxelGenerator : MonoBehaviour
         AddTriangleIndices();
         AddUVCoords(uvCoords);
     }
-
     public void CreatePositiveZFace(int x, int y, int z, string texture)
     {
         Vector2 uvCoords = texNameCoordDictionary[texture];
@@ -218,6 +228,12 @@ public class VoxelGenerator : MonoBehaviour
         AddUVCoords(uvCoords);
     }
 
+
+    /*
+    ==================================================
+    Setting Block Edges
+    ==================================================
+    */
     void AddTriangleIndices()
     {
         triIndexList.Add(numQuads * 4);
@@ -229,14 +245,17 @@ public class VoxelGenerator : MonoBehaviour
         numQuads++;
     }
 
+
+    /*
+    ==================================================
+    Setting Block Texture
+    ==================================================
+    */
     void AddUVCoords(Vector2 uvCoords)
     {
-        UVList.Add(new Vector2(uvCoords.x, uvCoords.y +
-       0.5f));
-        UVList.Add(new Vector2(uvCoords.x + 0.5f, uvCoords.y +
-       0.5f));
-        UVList.Add(new Vector2(uvCoords.x + 0.5f,
-       uvCoords.y));
+        UVList.Add(new Vector2(uvCoords.x, uvCoords.y + 0.5f));
+        UVList.Add(new Vector2(uvCoords.x + 0.5f, uvCoords.y + 0.5f));
+        UVList.Add(new Vector2(uvCoords.x + 0.5f, uvCoords.y));
         UVList.Add(new Vector2(uvCoords.x, uvCoords.y));
     }
 
@@ -244,6 +263,7 @@ public class VoxelGenerator : MonoBehaviour
     {
         // Create a dictionary instance before using
         texNameCoordDictionary = new Dictionary<string, Vector2>();
+
         // Check the number of names and coordinates match
         if (texNames.Count == texCoords.Count)
         {
