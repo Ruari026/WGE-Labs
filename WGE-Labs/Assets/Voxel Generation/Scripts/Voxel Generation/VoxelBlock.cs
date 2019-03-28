@@ -75,26 +75,6 @@ public class VoxelBlock : MonoBehaviour
     {
         CheckForPlayerPickup();
 
-        if (!triggered)
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                //Block Floats To The Player
-                Vector3 floatDirection = Vector3.up;
-                theRB.AddForce(floatDirection * floatForce * 10);
-
-                triggered = true;
-            }
-        }
-        if (triggered)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-            //Block Floats To The Player
-            Vector3 floatDirection = (player.transform.position - this.transform.position).normalized;
-            theRB.AddForce(floatDirection * floatForce);
-        }
-
         //Destroying the dropped block if it has fallen out of bounds
         if (this.transform.position.y <= -25)
         {

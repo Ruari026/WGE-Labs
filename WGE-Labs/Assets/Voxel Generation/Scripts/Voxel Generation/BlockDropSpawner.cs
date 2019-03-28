@@ -6,24 +6,6 @@ public class BlockDropSpawner : MonoBehaviour
 { 
     public GameObject dropBlockPrefab;
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.R))
-        {
-            int b = Random.Range(1, 5);
-            Vector3 pos = GameObject.FindGameObjectWithTag("Player").transform.position;
-            pos.y += 10;
-            SpawnDropBlock(b, pos);
-        }
-    }
-
     // When game object is enabled
     void OnEnable()
     {

@@ -16,7 +16,7 @@ public class VoxelChunk : MonoBehaviour
     public static event EventBlockChangedWithTypeAndPosition OnEventBlockDestroyed;
 
     VoxelGenerator voxelGenerator;
-    int[,,] terrainArray;
+    public int[,,] terrainArray;
     public int chunkSize = 16;
 
     // Use this for initialization
@@ -26,40 +26,11 @@ public class VoxelChunk : MonoBehaviour
 
         // Instantiate the array with size based on chunksize
         terrainArray = new int[chunkSize, chunkSize, chunkSize];
-        
         voxelGenerator.Initialise();
+
         InitialiseTerrain();
         CreateTerrain();
         voxelGenerator.UpdateMesh();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            Debug.Log("Saving Voxel Chunk to file");
-            XMLVoxelFileWriter.SaveChunkToXMLFile(terrainArray, "VoxelChunk");
-        }
-
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            if (XMLVoxelFileWriter.CheckIfFileExists("VoxelChunk"))
-            {
-                Debug.Log("Loading Voxel Chunk from file");
-
-                //Getting the terrainArray from the XML file
-                terrainArray = XMLVoxelFileWriter.LoadChunkFromXMLFile(16, "VoxelChunk");
-
-                //Drawing the correct faces
-                CreateTerrain();
-                voxelGenerator.UpdateMesh();
-            }
-            else
-            {
-                Debug.Log("Error: There is no previously existing save file");
-            }
-        }
     }
 
     // When game object is enabled
@@ -224,5 +195,48 @@ public class VoxelChunk : MonoBehaviour
 
             OnEventBlockChanged(blockType);
         }
+    }
+
+
+    /*
+    ====================================================================================================
+    Handling File Saving, Loading & Clearing
+    ====================================================================================================
+    */
+    public void LoadFile(string fileName)
+    {
+        if (XMLVoxelFileWriter.CheckIfFileExists(fileName))
+        {
+            Debug.Log("Loading Voxel Chunk from file");
+
+            //Getting the terrainArray from the XML file
+            terrainArray = XMLVoxelFileWriter.LoadChunkFromXMLFile(16, fileName);
+
+            //Drawing the correct faces
+            CreateTerrain();
+            voxelGenerator.UpdateMesh();
+        }
+        else
+        {
+            Debug.Log("Error: There is no previously existing save file");
+        }
+    }
+
+    public void SaveFile(string fileName)
+    {
+        Debug.Log("Saving Voxel Chunk to file");
+        XMLVoxelFileWriter.SaveChunkToXMLFile(terrainArray, fileName);
+    }
+
+    public void ClearFile()
+    {
+        Debug.Log("Clearing Voxel Chunk");
+        
+        terrainArray = new int[chunkSize, chunkSize, chunkSize];
+        InitialiseTerrain();
+
+        //Drawing the correct faces
+        CreateTerrain();
+        voxelGenerator.UpdateMesh();
     }
 }

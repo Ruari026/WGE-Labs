@@ -13,8 +13,12 @@ public class PlayerScript : MonoBehaviour
 
     public VoxelChunk voxelChunk;
 
-	// Use this for initialization
-	void Start ()
+    //Pause Menu Manager
+    public static bool paused = false;
+    public GameObject pauseCanvas;
+
+    // Use this for initialization
+    void Start ()
     {
 		
 	}
@@ -23,27 +27,37 @@ public class PlayerScript : MonoBehaviour
 	void Update ()
     {
         //Handling Block Placement & Removal
-		if (Input.GetButtonDown("Fire1"))
+        if (!paused)
         {
-            Vector3 v;
-            if (PickBlock(out v, 4, false))
+            if (Input.GetButtonDown("Fire1"))
             {
-                OnEventBlockSet(v, 0);
-            }
-        }
-        else if (Input.GetButtonDown("Fire2"))
-        {
-            Vector3 v;
-            if (PickBlock(out v, 4, true))
-            {
-                int i = 0;
-                if (OnEventGetBlock(out i))
+                Vector3 v;
+                if (PickBlock(out v, 4, false))
                 {
-                    i++;
-                    OnEventBlockSet(v, i);
-
+                    OnEventBlockSet(v, 0);
                 }
             }
+            else if (Input.GetButtonDown("Fire2"))
+            {
+                Vector3 v;
+                if (PickBlock(out v, 4, true))
+                {
+                    int i = 0;
+                    if (OnEventGetBlock(out i))
+                    {
+                        i++;
+                        OnEventBlockSet(v, i);
+
+                    }
+                }
+            }
+        }
+
+        //Pause Menu Handling
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            paused = !paused;
+            SetPauseScreenState(paused);
         }
 
         //Player Respawn
@@ -99,8 +113,8 @@ public class PlayerScript : MonoBehaviour
         return false;
     }
 
-   bool PickBlock(out Vector3 v, float dist, bool placing)
-   {
+    bool PickBlock(out Vector3 v, float dist, bool placing)
+    {
         v = new Vector3();
         Ray ray = Camera.main.ScreenPointToRay(new
         Vector3(Screen.width / 2, Screen.height / 2, 0));
@@ -131,5 +145,33 @@ public class PlayerScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+
+    /*
+    ==================================================
+    Pause Menu Handling
+    ==================================================
+    */
+    private void SetPauseScreenState(bool paused)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (paused)
+        {
+            player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().enabled = false;
+            pauseCanvas.SetActive(true);
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().enabled = true;
+            pauseCanvas.SetActive(false);
+        }
     }
 }

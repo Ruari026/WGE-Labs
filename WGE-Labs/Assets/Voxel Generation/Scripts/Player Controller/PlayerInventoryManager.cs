@@ -5,9 +5,13 @@ using UnityEngine.UI;
 
 public class PlayerInventoryManager : MonoBehaviour
 {
+    public Sprite slotDefaultSprite;
+    public Sprite slotSelectedSprite;
+
     public Image[] inventorySlots;
     public int[] inventoryAmounts;
     public Text[] amountTexts;
+
     private int currentSelectedSlot = 0;
 
 	// Use this for initialization
@@ -32,28 +36,31 @@ public class PlayerInventoryManager : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        if (Input.mouseScrollDelta.y != 0)
+        if (!PlayerScript.paused)
         {
-            if (Input.mouseScrollDelta.y > 0)
+            if (Input.mouseScrollDelta.y != 0)
             {
-                currentSelectedSlot++;
-
-                if (currentSelectedSlot >= inventorySlots.Length)
+                if (Input.mouseScrollDelta.y > 0)
                 {
-                    currentSelectedSlot = 0;
-                }
-            }
-            else
-            {
-                currentSelectedSlot--;
+                    currentSelectedSlot++;
 
-                if (currentSelectedSlot < 0)
+                    if (currentSelectedSlot >= inventorySlots.Length)
+                    {
+                        currentSelectedSlot = 0;
+                    }
+                }
+                else
                 {
-                    currentSelectedSlot = inventorySlots.Length - 1;
-                }
-            }
+                    currentSelectedSlot--;
 
-            UpdateSelectedSlot();
+                    if (currentSelectedSlot < 0)
+                    {
+                        currentSelectedSlot = inventorySlots.Length - 1;
+                    }
+                }
+
+                UpdateSelectedSlot();
+            }
         }
 	}
 
@@ -61,24 +68,28 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         for (int i = 0; i < inventorySlots.Length; i++)
         {
-            inventorySlots[i].color = Color.black;
+            inventorySlots[i].sprite = slotDefaultSprite;
         }
-        inventorySlots[currentSelectedSlot].color = Color.white;
+        inventorySlots[currentSelectedSlot].sprite = slotSelectedSprite;
     }
 
 
     /*
-    ==================================================
+    ====================================================================================================
     Returning Information For The Player Controller
-    ==================================================
+    ====================================================================================================
     */
     private bool GetSelectedSlot(out int blockType)
     {
         blockType = currentSelectedSlot;
         if (inventoryAmounts[currentSelectedSlot] != 0)
         {
+            //Setting New Block Amount
             inventoryAmounts[currentSelectedSlot]--;
-            amountTexts[currentSelectedSlot].text = inventoryAmounts[currentSelectedSlot].ToString();
+
+            //Setting UI Display
+            amountTexts[(currentSelectedSlot * 2)].text = inventoryAmounts[currentSelectedSlot].ToString();
+            amountTexts[(currentSelectedSlot * 2) + 1].text = inventoryAmounts[currentSelectedSlot].ToString();
             return true;
         }
         else
@@ -91,7 +102,11 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         int i = blockType - 1;
 
+        //Setting New Block Amount
         inventoryAmounts[i]++;
-        amountTexts[i].text = inventoryAmounts[i].ToString();
+
+        //Setting UI Display
+        amountTexts[(i * 2)].text = inventoryAmounts[i].ToString();
+        amountTexts[(i * 2) + 1].text = inventoryAmounts[i].ToString();
     }
 }
